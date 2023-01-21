@@ -11,16 +11,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/register', name: 'app_register')]
+    #[Route(path: '/register', name: 'security_register')]
     public function register(AuthenticationUtils $authenticationUtils, EntityManagerInterface $entityManager): Response
     {
         $email = "test@example.org";
         $password = "symfony";
 
         if ($this->getUser()) 
-            return $this->redirectToRoute('app_logout');
+            return $this->redirectToRoute('security_logout');
         if( count($entityManager->getRepository(User::class)->findBy(["email" => $email])) )
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('security_login');
 
         $user = new User();
         $user->setEmail($email);
@@ -29,10 +29,16 @@ class SecurityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('security_login');
     }
 
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/', name: 'security_index')]
+    public function index(AuthenticationUtils $authenticationUtils): Response
+    {
+        return new Response('<html><head></head><body></body></html>');
+    }
+
+    #[Route(path: '/login', name: 'security_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
@@ -43,9 +49,15 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
+    #[Route(path: '/logout-request', name: 'security_logoutRequest')]
+    public function LogoutRequest()
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new \Exception("This page should not be displayed.. Firewall should take over during logout process. Please check your configuration..");
+    }
+
+    #[Route(path: '/logout', name: 'security_logout')]
+    public function logout(): Response
+    {
+        return $this->redirectToRoute('security_login');
     }
 }

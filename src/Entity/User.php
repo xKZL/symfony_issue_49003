@@ -7,25 +7,32 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+/**
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="userMetadata")
+ **/
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    /**
+      * @ORM\Id
+      * @ORM\GeneratedValue
+      * @ORM\Column
+      **/
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    /**
+     * @ORM\Column(length= 180, unique= true)]
+     * */
     private ?string $email = null;
-
-    #[ORM\Column]
+    
+    /**
+     * @ORM\Column
+     * */
     private array $roles = [];
 
     /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
+     * @ORM\Column
+     * */
     private ?string $password = null;
 
     public function getId(): ?int

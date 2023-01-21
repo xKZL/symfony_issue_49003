@@ -20,7 +20,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'security_login';
 
     public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
@@ -37,7 +37,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($request->request->get('password', '')),
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-		new RememberMeBadge()
+		        new RememberMeBadge()
             ]
         );
     }

@@ -1,44 +1,55 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
+        default_connection: default
+        connections:
+            default:
+                host:     '%env(resolve:DOCTRINE_DATABASE_HOST)%'
+                port:     '%env(DOCTRINE_DATABASE_PORT)%'
+                user:     '%env(DOCTRINE_DATABASE_USER)%'
+                password: '%env(DOCTRINE_DATABASE_PASSWORD)%'
+                dbname:   '%env(DOCTRINE_DATABASE)%'
 
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '15'
+                driver: 'pdo_mysql'
+                charset: utf8
+                default_table_options:
+                    charset: utf8
+                    collate: utf8_unicode_ci
+
     orm:
-        auto_generate_proxy_classes: true
-        enable_lazy_ghost_objects: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        dql:
+            numeric_functions:
+                rand: Base\Database\Function\Rand
+
+        second_level_cache:
+            enabled: true
+            region_cache_driver:
+                type: pool
+                pool: cache.adapter
+
+        quote_strategy: doctrine.orm.quote_strategy.default
+        naming_strategy:  Base\Database\Mapping\NamingStrategy
+        class_metadata_factory_name: Base\Database\Mapping\Factory\ClassMetadataFactory
+
         auto_mapping: true
+        auto_generate_proxy_classes: false
+        metadata_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        query_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        result_cache_driver: # be careful with that one :)
+            type: pool
+            pool: doctrine.result_cache_pool
+
         mappings:
             App:
                 is_bundle: false
+                type: annotation
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
 
-when@test:
-    doctrine:
-        dbal:
-            # "TEST_TOKEN" is typically set by ParaTest
-            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
-
-when@prod:
-    doctrine:
-        orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
-            query_cache_driver:
-                type: pool
-                pool: doctrine.system_cache_pool
-            result_cache_driver:
-                type: pool
-                pool: doctrine.result_cache_pool
-
-    framework:
-        cache:
-            pools:
-                doctrine.result_cache_pool:
-                    adapter: cache.app
-                doctrine.system_cache_pool:
-                    adapter: cache.system
+        filters:
+            trash_filter: Base\Database\Filter\TrashFilter
+            vault_filter: Base\Database\Filter\VaultFilter

@@ -1,0 +1,27 @@
+base:
+
+  database:
+    use_custom: true
+
+  router:
+    use_custom: false
+    fallback_warning: false
+
+    ip_access: false
+
+    keep_machine: '%env(bool:HTTP_KEEPMACHINE)%'
+    keep_subdomain: '%env(bool:HTTP_KEEPSUBDOMAIN)%'
+    permitted_hosts:
+      - {regex: '^([^\.]*)\.{0,1}feed.%env(HTTP_DOMAIN)%$'}
+      - {regex: '^([^\.]*)\.{0,1}s.%env(HTTP_DOMAIN)%$'}
+      - {regex: '^%env(HTTP_SUBDOMAIN)%\.{0,1}%env(HTTP_DOMAIN)%$'}
+
+  twig:
+    use_custom: true
+
+  parameter_bag:
+    use_hot_bag: false
+    use_setting_bag: false
+
+  annotations:
+    use_custom: false

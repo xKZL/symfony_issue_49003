@@ -5,7 +5,7 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        security_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
@@ -16,12 +16,12 @@ security:
 
         main:
             lazy: true
-            provider: app_user_provider
+            provider: security_user_provider
             custom_authenticator: App\Security\LoginFormAuthenticator
+           
             logout:
-                path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                path: security_logout
+                target: security_login
 
             remember_me: # 1 week in seconds
                 secret:   '%kernel.secret%' # required
